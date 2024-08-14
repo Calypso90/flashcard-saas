@@ -15,7 +15,7 @@ export default function Navbar() {
           <Link href="/dashboard" className="text-gray-600 text-xl hover:text-blue-600">
             Dashboard
           </Link>
-          <UserButton afterSignOutUrl="/" className="custom-user-button" />
+          <UserButton afterSignOutUrl="/" />
         </SignedIn>
         <SignedOut>
           <Link href="/sign-in" className="text-gray-600 hover:text-blue-600">
