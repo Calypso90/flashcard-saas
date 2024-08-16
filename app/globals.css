@@ -21,3 +21,34 @@ body {
   height: 50px;
 }
 
+/* Navbar */
+.typing-text {
+  display: inline-block;
+}
+
+.typing-letter {
+  display: inline-block;
+  opacity: 0;
+  animation: typing 0.5s forwards;
+  text-shadow: 0 0 5px lightskyblue, 0 0 10px rgba(135, 206, 250, 0.623), 0 0 15px rgba(135, 206, 250, 0.548), 0 0 20px rgba(135, 206, 250, 0.671);
+}
+
+.typing-letter:nth-child(1) { animation-delay: 0s; }
+.typing-letter:nth-child(2) { animation-delay: 0.1s; }
+.typing-letter:nth-child(3) { animation-delay: 0.2s; }
+.typing-letter:nth-child(4) { animation-delay: 0.3s; }
+.typing-letter:nth-child(5) { animation-delay: 0.4s; }
+.typing-letter:nth-child(6) { animation-delay: 0.5s; }
+.typing-letter:nth-child(7) { animation-delay: 0.6s; }
+.typing-letter:nth-child(8) { animation-delay: 0.7s; }
+.typing-letter:nth-child(9) { animation-delay: 0.8s; }
+.typing-letter:nth-child(10) { animation-delay: 0.9s; }
+.typing-letter:nth-child(11) { animation-delay: 1s; }
+
+@keyframes typing {
+  to {
+    opacity: 1;
+    color: skyblue;
+  }
+}
+

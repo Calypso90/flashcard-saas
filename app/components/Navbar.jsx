@@ -6,8 +6,12 @@ export default function Navbar() {
   return (
     <nav className="flex items-center justify-between py-4 px-8">
       <div className="flex">
-        <Link href="/" className="text-lg font-semibold text-blue-600 hover:text-blue-800">
-          My App
+        <Link href="/" className="text-2xl tracking-wider">
+        <span className="typing-text">
+            {Array.from("Flash\u00A0Wave").map((char, index) => (
+              <span key={index} className="typing-letter">{char}</span>
+            ))}
+          </span>
         </Link>
       </div>
       <div className="flex items-center space-x-4 gap-4">
