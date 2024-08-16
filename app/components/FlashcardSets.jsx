@@ -1,89 +1,25 @@
-import React from "react";
+export default function FlashcardSets() {
+  const { isLoaded, isSignedIn, user } = useUser()
+  const [flashcards, setFlashcards] = useState([])
+  const router = useRouter()
 
-function FlashcardSets() {
+  useEffect(() => {
+    async function getFlashcards() {
+      if (!user) return
+      const docRef = doc(collection(db, 'users'), user.id)
+      const docSnap = await getDoc(docRef)
+      if (docSnap.exists()) {
+        const collections = docSnap.data().flashcards || []
+        setFlashcards(collections)
+      } else {
+        await setDoc(docRef, { flashcards: [] })
+      }
+    }
+    getFlashcards()
+  }, [user])
+
   return (
     <>
-      <header className="w-full flex flex-col items-center gap-4">
-        <h1>Flashcard Sets</h1>
-        <p>Here you can view all the flashcard sets.</p>
-        <form className="">
-          <input type="text" placeholder="Search for a set" />
-          <button>Filter</button>
-          <button>Search</button>
-        </form>
-      </header>
-      <section className="flex flex-col items-center mt-8">
-        <h1>Best Sellers</h1>
-        <div className="flex gap-4">
-          <div>
-            <h2>Set Name</h2>
-            <p>Category</p>
-            <p>Price</p>
-            <button>View</button>
-          </div>
-          <div>
-            <h2>Set Name</h2>
-            <p>Category</p>
-            <p>Price</p>
-            <button>View</button>
-          </div>
-          <div>
-            <h2>Set Name</h2>
-            <p>Category</p>
-            <p>Price</p>
-            <button>View</button>
-          </div>
-          <div>
-            <h2>Set Name</h2>
-            <p>Category</p>
-            <p>Price</p>
-            <button>View</button>
-          </div>
-          <div>
-            <h2>Set Name</h2>
-            <p>Category</p>
-            <p>Price</p>
-            <button>View</button>
-          </div>
-        </div>
-      </section>
-      <section className="flex flex-col items-center mt-8">
-        <h1>Free</h1>
-        <div className="flex gap-4">
-          <div>
-            <h2>Set Name</h2>
-            <p>Category</p>
-            <p>Price</p>
-            <button>View</button>
-          </div>
-          <div>
-            <h2>Set Name</h2>
-            <p>Category</p>
-            <p>Price</p>
-            <button>View</button>
-          </div>
-          <div>
-            <h2>Set Name</h2>
-            <p>Category</p>
-            <p>Price</p>
-            <button>View</button>
-          </div>
-          <div>
-            <h2>Set Name</h2>
-            <p>Category</p>
-            <p>Price</p>
-            <button>View</button>
-          </div>
-          <div>
-            <h2>Set Name</h2>
-            <p>Category</p>
-            <p>Price</p>
-            <button>View</button>
-          </div>
-        </div>
-      </section>
     </>
-  );
+  )
 }
-
-export default FlashcardSets;
