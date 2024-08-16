@@ -6,7 +6,7 @@ const Footer = () => {
       <div className="container">
         <div className="row">
           <div className="col-12">
-            <p className="text-center">© 2024 Flashcard App. All Rights Reserved.</p>
+            <p className="text-center">© 2024 Flash Wave. All Rights Reserved.</p>
           </div>
         </div>
       </div>
