@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import React, { useState, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import { db } from "../../../firebase";
@@ -16,7 +16,7 @@ export default function Generate() {
   const [flashcards, setFlashCards] = useState([]);
   const [flipped, setFlipped] = useState({});
   const [text, setText] = useState("");
-  const [name, setName] = useState("");
+  const [setName, setSetName] = useState(""); // Changed from 'name' to 'setName' for clarity
   const [open, setOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -60,44 +60,40 @@ export default function Generate() {
   const handleClose = () => setOpen(false);
 
   const saveFlashcards = async () => {
-    if (typeof name !== "string" || !name.trim()) {
+    if (!setName.trim()) {
       alert("Please enter a name for your flashcard set.");
       return;
     }
 
     setIsSaving(true);
-
     try {
-      const userDocRef = doc(db, "users", user.id);
+      const userDocRef = doc(collection(db, "users"), user.id);
       const userDocSnap = await getDoc(userDocRef);
 
       const batch = writeBatch(db);
 
       if (userDocSnap.exists()) {
         const userData = userDocSnap.data();
-        const updatedSets = [...(userData.flashcardSets || []), { name: name }];
-        console.log("Updating user document with data:", updatedSets);
+        const updatedSets = [
+          ...(userData.flashcardSets || []),
+          { name: setName },
+        ];
         batch.update(userDocRef, { flashcardSets: updatedSets });
       } else {
-        console.log("Setting new user document with data:", [{ name: name }]);
-        batch.set(userDocRef, { flashcardSets: [{ name: name }] });
+        batch.set(userDocRef, { flashcardSets: [{ name: setName }] });
       }
 
-      const setDocRef = doc(
-        collection(db, "users", user.id, "flashcardSets"),
-        name
-      );
-      console.log("Setting flashcard set document with data:", {
-        flashcards: flashcards,
-      });
-      batch.set(setDocRef, { flashcards: flashcards });
+      const setDocRef = doc(collection(userDocRef, "flashcardSets"), setName);
+      batch.set(setDocRef, { flashcards });
 
       await batch.commit();
+
       alert("Flashcards saved successfully!");
       handleClose();
+      setSetName("");
     } catch (error) {
       console.error("Error saving flashcards:", error);
-      alert("Error saving flashcards: " + error.message);
+      alert("An error occurred while saving flashcards. Please try again.");
     } finally {
       setIsSaving(false);
     }
@@ -183,8 +179,8 @@ export default function Generate() {
             </p>
             <input
               type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={setName}
+              onChange={(e) => setSetName(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded-md mb-4"
               placeholder="Collection Name"
             />
