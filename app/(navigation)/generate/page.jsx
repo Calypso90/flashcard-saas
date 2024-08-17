@@ -1,8 +1,8 @@
 "use client";
 
+import React, { useState } from 'react';
 import { useUser } from "@clerk/nextjs";
 import { db } from "../../../firebase";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   doc,
@@ -90,7 +90,7 @@ export default function Generate() {
     <div className="container mx-auto px-4">
       <div className="mt-8 mb-12 flex flex-col items-center">
         <h1 className="text-3xl font-bold mb-6">Generate Flashcards</h1>
-        <div className="w-full bg-white shadow-md rounded-lg p-6">
+        <div className="w-full bg-white shadow-md rounded-lg p-6 flex flex-col items-center">
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
@@ -100,7 +100,7 @@ export default function Generate() {
           />
           <button
             onClick={handleSubmit}
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors"
+            className="startBtn"
           >
             Submit
           </button>
@@ -114,7 +114,7 @@ export default function Generate() {
             {flashcards.map((flashcard, index) => (
               <div key={index} className="perspective-1000">
                 <div
-                  className={`relative w-full h-48 transition-transform duration-600 transform-style-3d ${
+                  className={`relative w-full h-48 transition-transform duration-600 transform-style-preserve-3d cursor-pointer ${
                     flipped[index] ? "rotate-y-180" : ""
                   }`}
                   onClick={() => handleCardClick(index)}
@@ -132,7 +132,7 @@ export default function Generate() {
           <div className="mt-8 mb-8 flex justify-center">
             <button
               onClick={handleOpen}
-              className="startBtn"
+              className="otherBtn"
             >
               Save
             </button>
@@ -163,7 +163,7 @@ export default function Generate() {
               </button>
               <button
                 onClick={saveFlashcards}
-                className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors"
+                className="otherBtn"
               >
                 Save
               </button>
