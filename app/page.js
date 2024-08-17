@@ -1,5 +1,6 @@
 import Footer from "./components/Footer";
 import getStripe from "./utils/get-stripe";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -9,9 +10,9 @@ export default function Home() {
         <p className="text-xl mb-8">
           The easiest way to make your own flashcards from your text to AI.
         </p>
-        <button href="/generate" className="startBtn w-fit">
+        <Link href="/generate" className="startBtn w-fit">
           Get Started
-        </button>
+        </Link>
         <button className="border mt-2 border-blue-500 text-blue-500 font-bold py-2 px-4 rounded w-fit shadow-gray-900 shadow-md hover:bg-blue-100">
           Learn More
         </button>
@@ -42,13 +43,13 @@ export default function Home() {
             <h1>Free</h1>
             <p>$0/Month</p>
             <p>text</p>
-            <button href="/signup">Sign Up</button>
+            <Link href="/sign-up">Sign Up</Link>
           </div>
           <div>
             <h1>Pro</h1>
             <p>$10/Month</p>
             <p>text</p>
-            <button href="/signup">Sign Up</button>
+            <Link href="/sign-up">Sign Up</Link>
           </div>
         </div>
       </section>
