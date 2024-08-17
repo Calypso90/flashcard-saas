@@ -1,5 +1,5 @@
 "use client";
-
+import { useAuth } from "@clerk/nextjs";
 import React, { useState } from 'react';
 import { useUser } from "@clerk/nextjs";
 import { db } from "../../../firebase";
@@ -13,7 +13,7 @@ import {
 } from "firebase/firestore";
 
 export default function Generate() {
-  const { isLoaded, isSignedIn, user } = useUser();
+  const { isLoaded, isSignedIn, user } = useAuth();
   const [flashcards, setFlashCards] = useState([]);
   const [flipped, setFlipped] = useState({});
   const [text, setText] = useState("");
@@ -85,7 +85,19 @@ export default function Generate() {
     handleClose();
     router.push("/flashcards");
   };
-
+  if (!isSignedIn) {
+    return (
+      <div className="container mx-auto px-4">
+        <div className="mt-8 mb-12 flex flex-col items-center">
+          <h1 className="text-3xl font-bold mb-6">Generate Flashcards</h1>
+          <div className="w-full bg-white shadow-md rounded-lg p-6 flex flex-col items-center">
+            <p className="text-red-500">You must sign in first to make flashcards.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <div className="container mx-auto px-4">
       <div className="mt-8 mb-12 flex flex-col items-center">
