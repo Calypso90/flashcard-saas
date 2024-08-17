@@ -1,6 +1,14 @@
+'use client';
 import Footer from "./components/Footer";
 import getStripe from "./utils/get-stripe";
 import Link from "next/link";
+import { useState } from "react";
+
+// PricingSection as a separate client component
+import dynamic from "next/dynamic";
+const PricingSection = dynamic(() => import("./components/PricingSection"), {
+  ssr: false,
+});
 
 export default function Home() {
   return (
@@ -36,23 +44,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <section className="grid grid-cols-1 gap-4 my-4 justify-items-center">
-        <h2 className="text-3xl font-bold mb-4">Pricing</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 justify-center">
-          <div>
-            <h1>Free</h1>
-            <p>$0/Month</p>
-            <p>text</p>
-            <Link href="/sign-up">Sign Up</Link>
-          </div>
-          <div>
-            <h1>Pro</h1>
-            <p>$10/Month</p>
-            <p>text</p>
-            <Link href="/sign-up">Sign Up</Link>
-          </div>
-        </div>
-      </section>
+      <PricingSection />
       <div className="flex items-center justify-center fixed bottom-0 w-full py-4">
         <Footer />
       </div>
