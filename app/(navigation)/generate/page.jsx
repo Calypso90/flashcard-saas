@@ -59,68 +59,39 @@ export default function Generate() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const saveFlashcards = useCallback(async () => {
-    if (!isSignedIn || !user) {
-      alert("You must be signed in to save flashcards.");
+  const saveFlashcards = async () => {
+    if (typeof name !== "string" || !name.trim()) {
+      alert("Please enter a name for your flashcard set.");
       return;
     }
 
-    if (!name) {
-      alert("Please enter a name for your flashcard collection.");
-      return;
-    }
-
-    setIsSaving(true);
     try {
-      const batch = writeBatch(db);
-      const userDocRef = doc(db, "users", user.id);
+      const userDocRef = doc(collection(db, "users"), user.id);
       const userDocSnap = await getDoc(userDocRef);
 
-      if (!userDocSnap.exists()) {
-        // Create the user document if it doesn't exist
-        batch.set(userDocRef, { email: user.primaryEmailAddress.emailAddress });
+      const batch = writeBatch(db);
+
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+        const updatedSets = [
+          ...(userData.flashcardSets || []),
+          { name: setName },
+        ];
+        batch.update(userDocRef, { flashcardSets: updatedSets });
+      } else {
+        batch.set(userDocRef, { flashcardSets: [{ name: setName }] });
       }
 
-      const flashcardsCollectionRef = collection(userDocRef, "flashcards");
-      const flashcardDocRef = doc(flashcardsCollectionRef, name);
-
-      // Check if a flashcard collection with this name already exists
-      const flashcardDocSnap = await getDoc(flashcardDocRef);
-      if (flashcardDocSnap.exists()) {
-        alert(
-          "A flashcard collection with this name already exists. Please choose a different name."
-        );
-        setIsSaving(false);
-        return;
-      }
-
-      // Save the flashcard collection
-      batch.set(flashcardDocRef, { name, createdAt: new Date() });
-
-      // Save individual flashcards
-      flashcards.forEach((flashcard, index) => {
-        const cardDocRef = doc(flashcardDocRef, "cards", index.toString());
-        batch.set(cardDocRef, flashcard);
-      });
+      const setDocRef = doc(collection(userDocRef, "flashcardSets"), setName);
+      batch.set(setDocRef, { flashcards: [] });
 
       await batch.commit();
-
       alert("Flashcards saved successfully!");
-      handleClose();
-      router.push("/flashcards");
     } catch (error) {
       console.error("Error saving flashcards:", error);
-      if (error.code === "permission-denied") {
-        alert(
-          "You don't have permission to save flashcards. Please check your account and try again."
-        );
-      } else {
-        alert("An error occurred while saving flashcards. Please try again.");
-      }
-    } finally {
-      setIsSaving(false);
+      alert("Error saving flashcards: " + error.message);
     }
-  }, [isSignedIn, user, name, flashcards, handleClose, router]);
+  };
 
   if (!isLoaded) {
     return <div>Loading...</div>;
