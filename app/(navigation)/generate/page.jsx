@@ -65,31 +65,41 @@ export default function Generate() {
       return;
     }
 
+    setIsSaving(true);
+
     try {
-      const userDocRef = doc(collection(db, "users"), user.id);
+      const userDocRef = doc(db, "users", user.id);
       const userDocSnap = await getDoc(userDocRef);
 
       const batch = writeBatch(db);
 
       if (userDocSnap.exists()) {
         const userData = userDocSnap.data();
-        const updatedSets = [
-          ...(userData.flashcardSets || []),
-          { name: setName },
-        ];
+        const updatedSets = [...(userData.flashcardSets || []), { name: name }];
+        console.log("Updating user document with data:", updatedSets);
         batch.update(userDocRef, { flashcardSets: updatedSets });
       } else {
-        batch.set(userDocRef, { flashcardSets: [{ name: setName }] });
+        console.log("Setting new user document with data:", [{ name: name }]);
+        batch.set(userDocRef, { flashcardSets: [{ name: name }] });
       }
 
-      const setDocRef = doc(collection(userDocRef, "flashcardSets"), setName);
-      batch.set(setDocRef, { flashcards: [] });
+      const setDocRef = doc(
+        collection(db, "users", user.id, "flashcardSets"),
+        name
+      );
+      console.log("Setting flashcard set document with data:", {
+        flashcards: flashcards,
+      });
+      batch.set(setDocRef, { flashcards: flashcards });
 
       await batch.commit();
       alert("Flashcards saved successfully!");
+      handleClose();
     } catch (error) {
       console.error("Error saving flashcards:", error);
       alert("Error saving flashcards: " + error.message);
+    } finally {
+      setIsSaving(false);
     }
   };
 
