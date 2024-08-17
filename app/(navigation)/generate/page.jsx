@@ -1,6 +1,5 @@
 "use client";
-import { useAuth } from "@clerk/nextjs";
-import React, { useState } from 'react';
+import React, { useState, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import { db } from "../../../firebase";
 import { useRouter } from "next/navigation";
@@ -13,12 +12,14 @@ import {
 } from "firebase/firestore";
 
 export default function Generate() {
-  const { isLoaded, isSignedIn, user } = useAuth();
+  const { isLoaded, isSignedIn, user } = useUser();
   const [flashcards, setFlashCards] = useState([]);
   const [flipped, setFlipped] = useState({});
   const [text, setText] = useState("");
   const [name, setName] = useState("");
   const [open, setOpen] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async () => {
@@ -27,6 +28,7 @@ export default function Generate() {
       return;
     }
 
+    setIsGenerating(true);
     try {
       const response = await fetch("/api/generate", {
         method: "POST",
@@ -42,6 +44,8 @@ export default function Generate() {
     } catch (error) {
       console.error("Error generating flashcards:", error);
       alert("An error occurred while generating flashcards. Please try again.");
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -55,49 +59,88 @@ export default function Generate() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const saveFlashcards = async () => {
-    if (!name) {
-      alert("please enter the name");
+  const saveFlashcards = useCallback(async () => {
+    if (!isSignedIn || !user) {
+      alert("You must be signed in to save flashcards.");
       return;
     }
-    const batch = writeBatch(db);
-    const userDocRef = doc(collection(db, "users"), user.id);
-    const docSna = await getDoc(userDocRef);
 
-    if (DocumentSnapshot.exists()) {
-      const collections = docSnap.data().flashcards || [];
-      if (collections.find((f) => f.name === name)) {
-        alert("Flashcard collection with same Name already exists");
-        return;
-      } else {
-        collections.push({ name });
-        batch.set(userDocRef, { flashcards: collection }, { merge: true });
-      }
-    } else {
-      batch.set(userDocRef, { flashcards: [{ name }] });
+    if (!name) {
+      alert("Please enter a name for your flashcard collection.");
+      return;
     }
-    const colRef = collection(userDocRef, name);
-    flashcards.forEach((flashcard) => {
-      const cardDocRef = doc(colRef);
-      batch.set(carDocRef, flashcard);
-    });
-    await batch.commit();
-    handleClose();
-    router.push("/flashcards");
-  };
+
+    setIsSaving(true);
+    try {
+      const batch = writeBatch(db);
+      const userDocRef = doc(db, "users", user.id);
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (!userDocSnap.exists()) {
+        // Create the user document if it doesn't exist
+        batch.set(userDocRef, { email: user.primaryEmailAddress.emailAddress });
+      }
+
+      const flashcardsCollectionRef = collection(userDocRef, "flashcards");
+      const flashcardDocRef = doc(flashcardsCollectionRef, name);
+
+      // Check if a flashcard collection with this name already exists
+      const flashcardDocSnap = await getDoc(flashcardDocRef);
+      if (flashcardDocSnap.exists()) {
+        alert(
+          "A flashcard collection with this name already exists. Please choose a different name."
+        );
+        setIsSaving(false);
+        return;
+      }
+
+      // Save the flashcard collection
+      batch.set(flashcardDocRef, { name, createdAt: new Date() });
+
+      // Save individual flashcards
+      flashcards.forEach((flashcard, index) => {
+        const cardDocRef = doc(flashcardDocRef, "cards", index.toString());
+        batch.set(cardDocRef, flashcard);
+      });
+
+      await batch.commit();
+
+      alert("Flashcards saved successfully!");
+      handleClose();
+      router.push("/flashcards");
+    } catch (error) {
+      console.error("Error saving flashcards:", error);
+      if (error.code === "permission-denied") {
+        alert(
+          "You don't have permission to save flashcards. Please check your account and try again."
+        );
+      } else {
+        alert("An error occurred while saving flashcards. Please try again.");
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  }, [isSignedIn, user, name, flashcards, handleClose, router]);
+
+  if (!isLoaded) {
+    return <div>Loading...</div>;
+  }
+
   if (!isSignedIn) {
     return (
       <div className="container mx-auto px-4">
         <div className="mt-8 mb-12 flex flex-col items-center">
           <h1 className="text-3xl font-bold mb-6">Generate Flashcards</h1>
           <div className="w-full bg-white shadow-md rounded-lg p-6 flex flex-col items-center">
-            <p className="text-red-500">You must sign in first to make flashcards.</p>
+            <p className="text-red-500">
+              You must sign in first to make flashcards.
+            </p>
           </div>
         </div>
       </div>
     );
   }
-  
+
   return (
     <div className="container mx-auto px-4">
       <div className="mt-8 mb-12 flex flex-col items-center">
@@ -113,8 +156,9 @@ export default function Generate() {
           <button
             onClick={handleSubmit}
             className="startBtn"
+            disabled={isGenerating}
           >
-            Submit
+            {isGenerating ? "Generating..." : "Submit"}
           </button>
         </div>
       </div>
@@ -142,10 +186,7 @@ export default function Generate() {
             ))}
           </div>
           <div className="mt-8 mb-8 flex justify-center">
-            <button
-              onClick={handleOpen}
-              className="otherBtn"
-            >
+            <button onClick={handleOpen} className="otherBtn">
               Save
             </button>
           </div>
@@ -166,18 +207,20 @@ export default function Generate() {
               className="w-full p-2 border border-gray-300 rounded-md mb-4"
               placeholder="Collection Name"
             />
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-4">
               <button
                 onClick={handleClose}
-                className="mr-2 bg-gray-300 text-black py-2 px-4 rounded-md hover:bg-gray-400 transition-colors"
+                className="startBtn"
+                disabled={isSaving}
               >
                 Close
               </button>
               <button
                 onClick={saveFlashcards}
                 className="otherBtn"
+                disabled={isSaving}
               >
-                Save
+                {isSaving ? "Saving..." : "Save"}
               </button>
             </div>
           </div>
