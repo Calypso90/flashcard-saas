@@ -91,6 +91,45 @@ body {
   text-decoration: none;
 }
 
+/* Other Button */
+.otherBtn {
+  background: #09b626;
+  background-image: -webkit-linear-gradient(top, #6fdb81, #09b626);
+  background-image: -moz-linear-gradient(top, #6fdb81, #09b626);
+  background-image: -ms-linear-gradient(top, #6fdb81, #09b626);
+  background-image: -o-linear-gradient(top, #6fdb81, #09b626);
+  background-image: -webkit-gradient(to bottom, #6fdb81, #09b626);
+  -webkit-border-radius: 16px;
+  -moz-border-radius: 16px;
+  border-radius: 16px;
+  color: #FFFFFF;
+  font-family: Open Sans;
+  font-size: 18px;
+  font-weight: 400;
+  padding: 5px 10px;
+  -webkit-box-shadow: 1px 1px 20px 0 #000000;
+  -moz-box-shadow: 1px 1px 20px 0 #000000;
+  box-shadow: 1px 1px 20px 0 #000000;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+  text-align: center;
+}
+
+.otherBtn:hover {
+  border: solid #6fdb81 1px;
+  background: #09b626;
+  background-image: -webkit-linear-gradient(top, #09b626, #6fdb81);
+  background-image: -moz-linear-gradient(top, #09b626, #6fdb81);
+  background-image: -ms-linear-gradient(top, #09b626, #6fdb81);
+  background-image: -o-linear-gradient(top, #09b626, #6fdb81);
+  background-image: -webkit-gradient(to bottom, #09b626, #6fdb81);
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  border-radius: 20px;
+  text-decoration: none;
+}
+
 /* flashcard flip */
 .flip-card {
   perspective: 1000px;
