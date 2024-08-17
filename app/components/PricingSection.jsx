@@ -39,7 +39,7 @@ export default function PricingSection() {
           <p>Basic features</p>
           <button
             onClick={() => handleSubmit('basic')}
-            className="text-blue-500 hover:underline"
+            className="startBtn"
             disabled={isLoading}
           >
             {isLoading ? 'Processing...' : 'Choose Basic Plan'}
@@ -51,7 +51,7 @@ export default function PricingSection() {
           <p>Advanced features</p>
           <button
             onClick={() => handleSubmit('pro')}
-            className="text-blue-500 hover:underline"
+            className="otherBtn"
             disabled={isLoading}
           >
             {isLoading ? 'Processing...' : 'Choose Pro Plan'}
