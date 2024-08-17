@@ -21,12 +21,12 @@ export default function Navbar() {
           <UserButton afterSignOutUrl="/" />
         </SignedIn>
         <SignedOut>
-          <Link href="/sign-in" className="text-gray-200 hover:text-blue-300">
+          <Link href="/sign-in" className="startBtn">
             Sign In
           </Link>
           <Link
             href="/sign-up"
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+            className="otherBtn"
           >
             Sign Up
           </Link>
