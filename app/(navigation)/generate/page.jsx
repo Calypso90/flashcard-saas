@@ -114,7 +114,7 @@ export default function Generate() {
             {flashcards.map((flashcard, index) => (
               <div key={index} className="perspective-1000">
                 <div
-                  className={`relative w-full h-48 transition-transform duration-600 transform-style-3d cursor-pointer ${
+                  className={`relative w-full h-48 transition-transform duration-600 transform-style-3d ${
                     flipped[index] ? "rotate-y-180" : ""
                   }`}
                   onClick={() => handleCardClick(index)}
@@ -129,10 +129,10 @@ export default function Generate() {
               </div>
             ))}
           </div>
-          <div className="mt-8 flex justify-center">
+          <div className="mt-8 mb-8 flex justify-center">
             <button
               onClick={handleOpen}
-              className="bg-purple-500 text-white py-2 px-4 rounded-md hover:bg-purple-600 transition-colors"
+              className="startBtn"
             >
               Save
             </button>
