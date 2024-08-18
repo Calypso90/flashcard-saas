@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
-import { db } from "../../../firebase";
+import { db } from "../../firebase";
 import { useRouter } from "next/navigation";
 import {
   doc,

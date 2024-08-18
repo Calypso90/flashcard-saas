@@ -1,8 +1,9 @@
+'use client';
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/router";
 import { doc, getDoc, setDoc, collection } from "firebase/firestore";
-import { db } from "../../../firebase";
+import { db } from "../../firebase";
 import Link from "next/link";
 
 export default function Flashcard() {
