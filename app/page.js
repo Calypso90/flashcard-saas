@@ -1,8 +1,6 @@
 "use client";
 import Footer from "./components/Footer";
-import getStripe from "./utils/get-stripe";
 import Link from "next/link";
-import { useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 
 // PricingSection as a separate client component
