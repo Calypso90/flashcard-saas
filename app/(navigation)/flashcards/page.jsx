@@ -28,14 +28,30 @@ export default function Flashcards() {
 
   if (!isLoaded) return <div>Loading...</div>;
 
+  if (!isSignedIn) {
+    return (
+      <div className="container mx-auto px-4">
+        <div className="mt-8 mb-12 flex flex-col items-center">
+          <h1 className="text-3xl font-bold mb-6">Flashcard Sets</h1>
+          <div className="w-full bg-white shadow-md rounded-lg p-6 flex flex-col items-center">
+            <p className="text-red-500">
+              You must sign in first to view flashcard sets.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto max-w-3xl">
+      <h1 className="text-3xl font-bold text-center my-8">Your Flashcard Sets</h1>
       <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
         {flashcardSets.map((set, index) => (
           <Link href={`/flashcard/${set.id}`} key={index}>
             <div className="cursor-pointer rounded-lg border border-gray-200 shadow-md transition-shadow hover:shadow-lg">
               <div className="p-4 bg-white">
-                <h2 className="text-xl font-semibold text-black capitalize text-center">{set.id}</h2>
+                <h2 className="text-xl font-semibold text-black capitalize text-center">{set.name || set.id}</h2>
               </div>
             </div>
           </Link>
