@@ -1,5 +1,13 @@
+// app/flashcard/page.jsx
+'use client';
+import { useEffect, useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { useSearchParams } from "next/navigation";
+import { collection, doc, getDocs } from "firebase/firestore";
+import { db } from "../../firebase";
+
 export default function Flashcard() {
-  const { isLoaded, isSignedIn, user } = useUser();
+  const { user } = useAuth();
   const [flashcards, setFlashcards] = useState([]);
   const [flipped, setFlipped] = useState({});
 
@@ -10,7 +18,7 @@ export default function Flashcard() {
     async function getFlashcard() {
       if (!search || !user) return;
 
-      const colRef = collection(doc(collection(db, "users"), user.id), search);
+      const colRef = collection(doc(collection(db, "users"), user.uid), search);
       const docs = await getDocs(colRef);
       const flashcards = [];
       docs.forEach((doc) => {
