@@ -4,10 +4,12 @@ import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
 import { useState, useEffect } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase"; // Make sure this path is correct
+import { useFirebaseUser } from "../hooks/useFirebaseUser";
 
 export default function Navbar() {
   const { isLoaded, user } = useUser();
   const [planType, setPlanType] = useState(null);
+  const { firebaseUser, isFirebaseLoading } = useFirebaseUser();
 
   useEffect(() => {
     async function fetchUserPlan() {
@@ -44,11 +46,14 @@ export default function Navbar() {
       </div>
       <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 gap-4">
         <SignedIn>
+          <Link href={`/generate`} className="otherBtn">
+            Generate Flashcards
+          </Link>
           <Link href={`/flashcards`} className="startBtn">
             Flashcards
           </Link>
-          {isLoaded && planType && (
-            <span className="text-sm font-medium">Plan: {planType}</span>
+          {!isFirebaseLoading && firebaseUser && (
+            <span className="text-sm font-medium">Plan: {firebaseUser.planType}</span>
           )}
           <UserButton afterSignOutUrl="/" />
         </SignedIn>

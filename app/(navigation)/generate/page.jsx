@@ -1,5 +1,5 @@
-'use client';
-import React, { useState, useCallback } from "react";
+"use client";
+import React, { useState, useCallback, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { db } from "../../firebase";
 import { useRouter } from "next/navigation";
@@ -9,22 +9,62 @@ import {
   setDoc,
   getDoc,
   writeBatch,
+  updateDoc,
 } from "firebase/firestore";
+import { useFirebaseUser } from "../../hooks/useFirebaseUser";
 
 export default function Generate() {
   const { isLoaded, isSignedIn, user } = useUser();
   const [flashcards, setFlashCards] = useState([]);
   const [flipped, setFlipped] = useState({});
   const [text, setText] = useState("");
-  const [setName, setSetName] = useState(""); // Changed from 'name' to 'setName' for clarity
+  const [setName, setSetName] = useState("");
   const [open, setOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [userPlan, setUserPlan] = useState(null);
+  const [flashcardSetsGenerated, setFlashcardSetsGenerated] = useState(0);
+  const { firebaseUser, isFirebaseLoading } = useFirebaseUser();
   const router = useRouter();
+
+  useEffect(() => {
+    async function fetchUserPlan() {
+      if (isLoaded && user) {
+        const userRef = doc(db, "users", user.id);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          setUserPlan(userData.planType);
+          setFlashcardSetsGenerated(userData.flashcardSetsGenerated || 0);
+        }
+      }
+    }
+    fetchUserPlan();
+  }, [isLoaded, user]);
 
   const handleSubmit = async () => {
     if (!text.trim()) {
       alert("Please enter some text to generate flashcards.");
+      return;
+    }
+
+    if (
+      firebaseUser.planType === "free" &&
+      firebaseUser.flashcardSetsGenerated >= 10
+    ) {
+      alert(
+        "You've reached the limit for the free plan. Please upgrade to generate more flashcards."
+      );
+      return;
+    }
+
+    if (
+      firebaseUser.planType === "basic" &&
+      firebaseUser.flashcardSetsGenerated >= 50
+    ) {
+      alert(
+        "You've reached the limit for the basic plan. Please upgrade to generate more flashcards."
+      );
       return;
     }
 
@@ -86,7 +126,15 @@ export default function Generate() {
       const setDocRef = doc(collection(userDocRef, "flashcardSets"), setName);
       batch.set(setDocRef, { flashcards });
 
+      // Increment flashcardSetsGenerated count
+      batch.update(userDocRef, {
+        flashcardSetsGenerated: firebaseUser.flashcardSetsGenerated + 1,
+      });
+
       await batch.commit();
+
+      // Update local state
+      setFlashcardSetsGenerated((prev) => prev + 1);
 
       alert("Flashcards saved successfully!");
       handleClose();
@@ -101,7 +149,7 @@ export default function Generate() {
     }
   };
 
-  if (!isLoaded) {
+  if (!isLoaded || isFirebaseLoading) {
     return <div>Loading...</div>;
   }
 
@@ -125,6 +173,10 @@ export default function Generate() {
       <div className="mt-8 mb-12 flex flex-col items-center">
         <h1 className="text-3xl font-bold mb-6">Generate Flashcards</h1>
         <div className="w-full bg-white shadow-md rounded-lg p-6 flex flex-col items-center">
+          <p className="mb-4">Your current plan: {firebaseUser.planType}</p>
+          <p className="mb-4">
+            Flashcard sets generated: {flashcardSetsGenerated}
+          </p>
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
@@ -135,7 +187,13 @@ export default function Generate() {
           <button
             onClick={handleSubmit}
             className="startBtn"
-            disabled={isGenerating}
+            disabled={
+              isGenerating ||
+              (firebaseUser.planType === "free" &&
+                firebaseUser.flashcardSetsGenerated >= 10) ||
+              (firebaseUser.planType === "basic" &&
+                firebaseUser.flashcardSetsGenerated >= 50)
+            }
           >
             {isGenerating ? "Generating..." : "Submit"}
           </button>
