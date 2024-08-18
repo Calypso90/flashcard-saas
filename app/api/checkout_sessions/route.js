@@ -11,7 +11,18 @@ export async function POST(req) {
     const { planType } = await req.json();
 
     let priceData;
-    if (planType === "basic") {
+    if (planType === "free") {
+      priceData = {
+        currency: "usd",
+        product_data: {
+          name: "Free Subscription",
+        },
+        unit_amount: 0,
+        recurring: {
+          interval: "month",
+        },
+      };
+    } else if (planType === "basic") {
       priceData = {
         currency: "usd",
         product_data: {

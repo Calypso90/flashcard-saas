@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import Footer from "./components/Footer";
 import getStripe from "./utils/get-stripe";
 import Link from "next/link";
@@ -23,9 +23,6 @@ export default function Home() {
         <Link href="/generate" className="startBtn w-fit">
           Get Started
         </Link>
-        <button className="border mt-2 border-blue-500 text-blue-500 font-bold py-2 px-4 rounded w-fit shadow-gray-900 shadow-md hover:bg-blue-100">
-          Learn More
-        </button>
       </section>
       <section className="grid grid-cols-1 my-4 justify-items-center">
         <div className="my-24">

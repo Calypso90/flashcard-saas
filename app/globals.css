@@ -52,6 +52,45 @@ body {
   }
 }
 
+/* Free Button */
+.freeBtn {
+  background: #ffa500;
+  background-image: -webkit-linear-gradient(top, #ffcb6a, #ffa500);
+  background-image: -moz-linear-gradient(top, #ffcb6a, #ffa500);
+  background-image: -ms-linear-gradient(top, #ffcb6a, #ffa500);
+  background-image: -o-linear-gradient(top, #ffcb6a, #ffa500);
+  background-image: -webkit-gradient(to bottom, #ffcb6a, #ffa500);
+  -webkit-border-radius: 16px;
+  -moz-border-radius: 16px;
+  border-radius: 16px;
+  color: #FFFFFF;
+  font-family: Open Sans;
+  font-size: 18px;
+  font-weight: 400;
+  padding: 5px 10px;
+  -webkit-box-shadow: 1px 1px 20px 0 #000000;
+  -moz-box-shadow: 1px 1px 20px 0 #000000;
+  box-shadow: 1px 1px 20px 0 #000000;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+  text-align: center;
+}
+
+.freeBtn:hover {
+  border: solid #ffcb6a 1px;
+  background: #ffa500;
+  background-image: -webkit-linear-gradient(top, #ffa500, #ffcb6a);
+  background-image: -moz-linear-gradient(top, #ffa500, #ffcb6a);
+  background-image: -ms-linear-gradient(top, #ffa500, #ffcb6a);
+  background-image: -o-linear-gradient(top, #ffa500, #ffcb6a);
+  background-image: -webkit-gradient(to bottom, #ffa500, #ffcb6a);
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  border-radius: 20px;
+  text-decoration: none;
+}
+
 /* Get Started Button */
 .startBtn {
   background: #3D94F6;
