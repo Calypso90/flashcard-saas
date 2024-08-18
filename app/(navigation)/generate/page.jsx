@@ -91,6 +91,8 @@ export default function Generate() {
       alert("Flashcards saved successfully!");
       handleClose();
       setSetName("");
+      setFlashCards([]);
+      setText("");
     } catch (error) {
       console.error("Error saving flashcards:", error);
       alert("An error occurred while saving flashcards. Please try again.");
