@@ -102,6 +102,10 @@ export default function Result() {
         >
           Return to Home
         </button>
+        <button
+          onclick={() => router.push('/generate')} className='otherBtn'>
+          Generate Flashcards
+        </button>
         {session.payment_status !== 'paid' && (
           <button 
             onClick={handleReturnToPayment}

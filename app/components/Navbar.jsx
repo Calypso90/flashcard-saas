@@ -1,8 +1,31 @@
+"use client";
 import Link from "next/link";
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
-import "../globals.css";
+import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
+import { useState, useEffect } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase"; // Make sure this path is correct
 
 export default function Navbar() {
+  const { isLoaded, user } = useUser();
+  const [planType, setPlanType] = useState(null);
+
+  useEffect(() => {
+    async function fetchUserPlan() {
+      if (isLoaded && user) {
+        try {
+          const userRef = doc(db, "users", user.id);
+          const userSnap = await getDoc(userRef);
+          if (userSnap.exists()) {
+            setPlanType(userSnap.data().planType);
+          }
+        } catch (error) {
+          console.error("Error fetching user plan:", error);
+        }
+      }
+    }
+    fetchUserPlan();
+  }, [isLoaded, user]);
+
   return (
     <nav className="flex flex-col sm:flex-row items-center justify-between py-4 px-8">
       <div className="flex mb-4 sm:mb-0">
@@ -24,6 +47,9 @@ export default function Navbar() {
           <Link href={`/flashcards`} className="startBtn">
             Flashcards
           </Link>
+          {isLoaded && planType && (
+            <span className="text-sm font-medium">Plan: {planType}</span>
+          )}
           <UserButton afterSignOutUrl="/" />
         </SignedIn>
         <SignedOut>
