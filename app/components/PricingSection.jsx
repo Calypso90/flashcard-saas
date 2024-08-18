@@ -8,6 +8,7 @@ export default function PricingSection() {
   const [isLoading, setIsLoading] = useState(false);
   const { firebaseUser, isFirebaseLoading } = useFirebaseUser();
   const [currentPlan, setCurrentPlan] = useState(null);
+  const [message, setMessage] = useState("");
   const isLoggedIn = firebaseUser !== null;
 
   useEffect(() => {
@@ -17,10 +18,16 @@ export default function PricingSection() {
   }, [firebaseUser]);
 
   const handleSubmit = async (planType) => {
+    if (!isLoggedIn) {
+      setMessage("Sign Up to select a plan.");
+      return;
+    }
+
     setIsLoading(true);
+    setMessage("");
     try {
       if (planType === currentPlan) {
-        alert("You are already subscribed to this plan.");
+        setMessage("You are already subscribed to this plan.");
         return;
       }
 
@@ -44,7 +51,7 @@ export default function PricingSection() {
       }
     } catch (error) {
       console.error("Error in handleSubmit:", error);
-      alert("An error occurred. Please try again.");
+      setMessage("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -76,12 +83,10 @@ export default function PricingSection() {
       });
 
       setCurrentPlan(planType);
-      alert(
-        "Your plan has been downgraded to Free. Your current subscription will remain active until the end of the billing period."
-      );
+      setMessage("Your plan has been downgraded to Free. Your current subscription will remain active until the end of the billing period.");
     } catch (error) {
       console.error("Error downgrading plan:", error);
-      alert("There was an error downgrading your plan. Please try again.");
+      setMessage("There was an error downgrading your plan. Please try again.");
     }
   };
 
@@ -131,7 +136,7 @@ export default function PricingSection() {
               {isLoading
                 ? "Processing..."
                 : !isLoggedIn || !currentPlan
-                ? `Choose ${plan.name.split(" ")[0]}`
+                ? `Choose ${plan.name.split(" ")[0]} Plan`
                 : currentPlan === plan.type
                 ? "Current Plan"
                 : currentPlan === "free"
@@ -143,6 +148,9 @@ export default function PricingSection() {
           </div>
         ))}
       </div>
+      {message && (
+        <div className="mt-4 text-red-500">{message}</div>
+      )}
       {!currentPlan && isLoggedIn && (
         <div className="mt-4 text-red-500">Select a Plan</div>
       )}
