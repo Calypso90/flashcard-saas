@@ -1,20 +1,21 @@
 // app/result/page.js
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function Result() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const session_id = searchParams.get('session_id');
+  const session_id = searchParams.get("session_id");
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!session_id) {
-      router.push('/');
+      router.push("/");
       return;
     }
 
@@ -39,7 +40,7 @@ export default function Result() {
     if (session && session.url) {
       window.location.href = session.url;
     } else {
-      router.push('/pricing');
+      router.push("/pricing");
     }
   };
 
@@ -53,11 +54,14 @@ export default function Result() {
 
   if (error) {
     return (
-      <div className="max-w-lg mx-auto mt-10 p-6 bg-red-100 border border-red-400 text-red-700 rounded-lg shadow-xl" role="alert">
+      <div
+        className="max-w-lg mx-auto mt-10 p-6 bg-red-100 border border-red-400 text-red-700 rounded-lg shadow-xl"
+        role="alert"
+      >
         <p className="font-bold">Error</p>
         <p>{error}</p>
-        <button 
-          onClick={() => router.push('/')}
+        <button
+          onClick={() => router.push("/")}
           className="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
         >
           Return to Home
@@ -80,37 +84,42 @@ export default function Result() {
       <h1 className="text-2xl font-bold mb-6 text-center">Checkout Result</h1>
       <div className="mb-6">
         <p className="text-lg mb-2 text-center">
-          Status: 
-          <span className={`font-semibold ${
-            session.payment_status === 'paid' ? 'text-green-600' : 
-            session.payment_status === 'unpaid' ? 'text-red-600' : 'text-yellow-600'
-          }`}>
-            {' '}{session.payment_status.charAt(0).toUpperCase() + session.payment_status.slice(1)}
+          Status:
+          <span
+            className={`font-semibold ${
+              session.payment_status === "paid"
+                ? "text-green-600"
+                : session.payment_status === "unpaid"
+                ? "text-red-600"
+                : "text-yellow-600"
+            }`}
+          >
+            {" "}
+            {session.payment_status.charAt(0).toUpperCase() +
+              session.payment_status.slice(1)}
           </span>
         </p>
-        {session.payment_status === 'paid' && (
-          <p className="text-green-600 text-center">Thank you for your payment!</p>
+        {session.payment_status === "paid" && (
+          <p className="text-green-600 text-center">
+            Thank you for your payment!
+          </p>
         )}
-        {session.payment_status === 'unpaid' && (
-          <p className="text-red-600 text-center">Your payment was not successful. Please try again.</p>
+        {session.payment_status === "unpaid" && (
+          <p className="text-red-600 text-center">
+            Your payment was not successful. Please try again.
+          </p>
         )}
       </div>
       <div className="flex justify-between">
-        <button 
-          onClick={() => router.push('/')}
-          className="startBtn"
-        >
+        <button onClick={() => router.push("/")} className="startBtn">
           Return to Home
         </button>
-        <button
-          onclick={() => router.push('/generate')} className='otherBtn'>
+        <Link href="/generate" className="otherBtn">
           Generate Flashcards
-        </button>
-        {session.payment_status !== 'paid' && (
-          <button 
-            onClick={handleReturnToPayment}
-            className="otherBtn"
-          >
+        </Link>
+
+        {session.payment_status !== "paid" && (
+          <button onClick={handleReturnToPayment} className="otherBtn">
             Try Payment Again
           </button>
         )}
