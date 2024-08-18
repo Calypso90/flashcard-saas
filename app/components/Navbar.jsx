@@ -53,7 +53,9 @@ export default function Navbar() {
             Flashcards
           </Link>
           {!isFirebaseLoading && firebaseUser && (
-            <span className="text-sm font-medium">Plan: {firebaseUser.planType}</span>
+            <span className="text-sm font-medium">
+              Plan: {firebaseUser.planType ? firebaseUser.planType : "None"}
+            </span>
           )}
           <UserButton afterSignOutUrl="/" />
         </SignedIn>

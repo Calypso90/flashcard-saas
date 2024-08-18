@@ -173,21 +173,30 @@ export default function Generate() {
       <div className="mt-8 mb-12 flex flex-col items-center">
         <h1 className="text-3xl font-bold mb-6">Generate Flashcards</h1>
         <div className="w-full bg-white shadow-md rounded-lg p-6 flex flex-col items-center">
-          <p className="mb-4">Your current plan: {firebaseUser.planType}</p>
+          <p className="mb-4">
+            Your current plan: {firebaseUser.planType || "None"}
+          </p>
           <p className="mb-4">
             Flashcard sets generated: {flashcardSetsGenerated}
           </p>
+          {!firebaseUser.planType && (
+            <p className="text-red-500 mb-4">
+              You must select a plan to continue.
+            </p>
+          )}
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Enter Text"
             className="w-full p-2 border border-gray-300 rounded-md mb-4"
             rows={4}
+            disabled={!firebaseUser.planType}
           />
           <button
             onClick={handleSubmit}
             className="startBtn"
             disabled={
+              !firebaseUser.planType ||
               isGenerating ||
               (firebaseUser.planType === "free" &&
                 firebaseUser.flashcardSetsGenerated >= 10) ||

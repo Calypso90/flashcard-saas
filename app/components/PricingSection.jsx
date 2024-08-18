@@ -8,6 +8,7 @@ export default function PricingSection() {
   const [isLoading, setIsLoading] = useState(false);
   const { firebaseUser, isFirebaseLoading } = useFirebaseUser();
   const [currentPlan, setCurrentPlan] = useState(null);
+  const isLoggedIn = firebaseUser !== null;
 
   useEffect(() => {
     if (firebaseUser) {
@@ -129,6 +130,8 @@ export default function PricingSection() {
             >
               {isLoading
                 ? "Processing..."
+                : !isLoggedIn || !currentPlan
+                ? `Choose ${plan.name.split(" ")[0]}`
                 : currentPlan === plan.type
                 ? "Current Plan"
                 : currentPlan === "free"
@@ -140,6 +143,9 @@ export default function PricingSection() {
           </div>
         ))}
       </div>
+      {!currentPlan && isLoggedIn && (
+        <div className="mt-4 text-red-500">Select a Plan</div>
+      )}
     </section>
   );
 }
