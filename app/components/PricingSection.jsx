@@ -4,6 +4,30 @@ import { useFirebaseUser } from "../hooks/useFirebaseUser"; // Adjust this path 
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase"; // Adjust this path as needed
 
+const plans = [
+  {
+    type: "free",
+    name: "Free",
+    displayName: <span className="font-bold text-xl">Free</span>,
+    price: "$0/Month",
+    limit: "10 Flashcard Sets",
+  },
+  {
+    type: "basic",
+    name: "Basic",
+    displayName: <span className="font-bold text-xl">Basic</span>,
+    price: "$5/Month",
+    limit: "50 Flashcard Sets",
+  },
+  {
+    type: "pro",
+    name: "Pro",
+    displayName: <span className="font-bold text-xl">Pro</span>,
+    price: "$10/Month",
+    limit: "Unlimited Flashcard Sets",
+  },
+];
+
 export default function PricingSection() {
   const [isLoading, setIsLoading] = useState(false);
   const { firebaseUser, isFirebaseLoading } = useFirebaseUser();
@@ -104,55 +128,32 @@ export default function PricingSection() {
         <div className="mt-4 text-red-500">Select a Plan</div>
       )}
       <div className="text-slate-300 grid grid-cols-1 md:grid-cols-3 gap-8 justify-center">
-        {[
-          {
-            type: "free",
-            name: "Free",
-            price: "$0/Month",
-            limit: "10 Flash Card Sets",
-          },
-          {
-            type: "basic",
-            name: "Basic",
-            price: "$5/Month",
-            limit: "50 Flashcard Sets",
-          },
-          {
-            type: "pro",
-            name: "Pro Subscription",
-            price: "$10/Month",
-            limit: "Unlimited Flashcard Sets",
-          },
-        ].map((plan) => (
+        {plans.map((plan) => (
           <div
             className="flex flex-col p-4 bg-slate-100 rounded-lg text-[#180082] items-center min-w-64"
             key={plan.type}
           >
-            <h1>{plan.name}</h1>
+            <h1>{plan.displayName}</h1>
             <p>{plan.price}</p>
             <p>{plan.limit}</p>
             <button
               onClick={() => handleSubmit(plan.type)}
               className={`${
                 plan.type === "free"
-                  ? "freeBtn mt-4"
+                  ? "freeBtn mt-4 mb-4"
                   : plan.type === "basic"
-                  ? "basicBtn mt-4"
-                  : "proBtn mt-4"
+                  ? "basicBtn mt-4 mb-4"
+                  : "proBtn mt-4 mb-4"
               }`}
               disabled={isLoading || currentPlan === plan.type}
             >
               {isLoading
                 ? "Processing..."
                 : !isLoggedIn || !currentPlan
-                ? `Choose ${plan.name.split(" ")[0]} Plan`
+                ? `Choose ${plan.name} Plan`
                 : currentPlan === plan.type
                 ? "Current Plan"
-                : currentPlan === "free"
-                ? `Upgrade to ${plan.name}`
-                : plan.type === "free"
-                ? "Downgrade to Free"
-                : `Change to ${plan.name}`}
+                : `Choose ${plan.name} Plan`}
             </button>
           </div>
         ))}

@@ -40,8 +40,8 @@ export default function Home() {
       <section className="grid grid-cols-1 my-20 justify-items-center text-black bg-[#E6E6FA] py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-5/6">
           <div>
-            <h3 className="text-xl font-bold ">Easy to use</h3>
-            <p className="">
+            <h3 className="text-xl font-bold mb-4">Easy to use</h3>
+            <p className="w-11/12">
               Our platform is designed with simplicity in mind. With an
               intuitive interface, you can easily navigate through the process
               of creating and saving your flashcards. Whether you&apos;re a student,
@@ -50,8 +50,8 @@ export default function Home() {
             </p>
           </div>
           <div>
-            <h3 className="text-xl font-bold ">AI-Generated Flashcard Sets</h3>
-            <p className="">
+            <h3 className="text-xl font-bold mb-4">AI-Generated Flashcard Sets</h3>
+            <p className="w-11/12">
               Harness the power of artificial intelligence to create a
               comprehensive set of flashcards with just a few clicks. Our AI
               technology analyzes your input and generates relevant flashcards,
@@ -60,8 +60,8 @@ export default function Home() {
             </p>
           </div>
           <div>
-            <h3 className="text-xl font-bold ">Save Your Flashcards</h3>
-            <p className="">
+            <h3 className="text-xl font-bold mb-4">Save Your Flashcards</h3>
+            <p className="w-11/12">
               Never lose your valuable flashcards again. Our platform allows you
               to securely save your flashcards for future access. Revisit them
               anytime, and pick up right where you left off, all within a secure
