@@ -94,7 +94,7 @@ export default function Flashcard() {
 
   return (
     <div className="mx-auto px-4 ">
-      <h1 className="text-6xl font-bold text-[#F2EBFF] text-center mb-8">
+      <h1 className="text-6xl font-bold text-[#F2EBFF] text-center mb-8 capitalize">
         {setName}
       </h1>
       <div className="w-5/6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6 mx-auto mb-10">
@@ -106,7 +106,7 @@ export default function Flashcard() {
               }`}
               onClick={() => handleCardClick(index)}
             >
-              <div className="absolute w-full h-full backface-hidden text-center flex justify-center items-center p-4 bg-white shadow-lg rounded-lg bg-[#98E2FF] font-bold">
+              <div className="absolute w-full h-full backface-hidden text-center flex justify-center items-center p-4 bg-white shadow-lg rounded-lg font-bold">
                 <p className="text-2xl">{flashcard.front}</p>
               </div>
               <div className="absolute w-full h-full backface-hidden flex text-center justify-center items-center p-4 bg-white shadow-lg rounded-lg rotate-y-180 overflow-auto font-bold">

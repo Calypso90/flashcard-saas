@@ -178,12 +178,10 @@ export default function Generate() {
           <p className="mb-4">
             Enter your notes or prompt below to create a set of 10 flashcards.
           </p>
-          {/* <p className="mb-4">
+          <p className="mb-4 capitalize">
             Your current plan: {firebaseUser.planType || "None"}
-          </p> */}
-          {/* <h1 className="text-3xl font-bold text-slate-200 mb-6">
-          Generate Flashcards
-        </h1> */}
+          </p>
+          <p className="mb-4">Flashcard Sets Saved: {flashcardSetsGenerated}</p>
           {!firebaseUser.planType && (
             <p className="text-red-500 mb-4">
               You must select a plan to continue.
@@ -228,7 +226,7 @@ export default function Generate() {
                   }`}
                   onClick={() => handleCardClick(index)}
                 >
-                  <div className="absolute w-full h-full backface-hidden text-center flex justify-center items-center p-4 bg-white shadow-lg rounded-lg bg-[#98E2FF] font-bold">
+                  <div className="absolute w-full h-full backface-hidden text-center flex justify-center items-center p-4 bg-white shadow-lg rounded-lg font-bold">
                     <p className="text-2xl">{flashcard.front}</p>
                   </div>
                   <div className="absolute w-full h-full backface-hidden flex text-center justify-center items-center p-4 bg-white shadow-lg rounded-lg rotate-y-180 overflow-auto font-bold">

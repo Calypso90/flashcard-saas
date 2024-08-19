@@ -34,7 +34,7 @@ export default function Flashcards() {
 
   if (!isSignedIn) {
     return (
-      <div className="container mx-auto px-4">
+      <div className="flex flex-col items-center justify-center">
         <div className="mt-8 mb-12 flex flex-col items-center">
           <h1 className="text-3xl font-bold mb-6">Flashcard Sets</h1>
           <div className="w-full bg-white shadow-md rounded-lg p-6 flex flex-col items-center">
@@ -48,7 +48,7 @@ export default function Flashcards() {
   }
 
   return (
-    <div className="container mx-auto w-3/4">
+    <div className="container mx-auto max-w-6xl">
       <h1 className="text-4xl font-bold text-slate-200 text-center mb-4">
         Saved Flashcard Sets
       </h1>
@@ -57,7 +57,7 @@ export default function Flashcards() {
           No flashcard sets available. Please generate and save a set.
         </div>
       ) : (
-        <div className="w-full grid grid-cols-1 sm:grid-cols-5 md:grid-cols-5 gap-6 mx-auto">
+        <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
           {flashcardSets.map((set, index) => (
             <Link href={`/flashcard/${set.id}`} key={index}>
               <div className="flex cursor-pointer rounded-lg border items-center justify-center text-center border-gray-200 shadow-md transition-shadow hover:shadow-lg min-h-32 p-4 bg-white">
