@@ -83,7 +83,9 @@ export default function PricingSection() {
       });
 
       setCurrentPlan(planType);
-      setMessage("Your plan has been downgraded to Free. Your current subscription will remain active until the end of the billing period.");
+      setMessage(
+        "Your plan has been downgraded to Free. Your current subscription will remain active until the end of the billing period."
+      );
     } catch (error) {
       console.error("Error downgrading plan:", error);
       setMessage("There was an error downgrading your plan. Please try again.");
@@ -91,13 +93,17 @@ export default function PricingSection() {
   };
 
   if (isFirebaseLoading) {
-    return <div>Loading...</div>;
+    return <div className="loading text-4xl py-20">Loading...</div>;
   }
 
   return (
     <section className="grid grid-cols-1 gap-4 my-4 justify-items-center">
-      <h2 className="text-3xl font-bold mb-4">Pricing</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 justify-center">
+      <h2 className="text-3xl font-bold text-slate-200 mb-4">Pricing</h2>
+      {message && <div className="mb-4 text-red-500">{message}</div>}
+      {!currentPlan && isLoggedIn && (
+        <div className="mt-4 text-red-500">Select a Plan</div>
+      )}
+      <div className="text-slate-300 grid grid-cols-1 md:grid-cols-3 gap-8 justify-center">
         {[
           {
             type: "free",
@@ -118,7 +124,10 @@ export default function PricingSection() {
             limit: "Unlimited Flashcard Sets",
           },
         ].map((plan) => (
-          <div key={plan.type}>
+          <div
+            className="flex flex-col p-4 bg-slate-100 rounded-lg text-[#180082] items-center min-w-64"
+            key={plan.type}
+          >
             <h1>{plan.name}</h1>
             <p>{plan.price}</p>
             <p>{plan.limit}</p>
@@ -126,10 +135,10 @@ export default function PricingSection() {
               onClick={() => handleSubmit(plan.type)}
               className={`${
                 plan.type === "free"
-                  ? "freeBtn"
+                  ? "freeBtn mt-4"
                   : plan.type === "basic"
-                  ? "startBtn"
-                  : "otherBtn"
+                  ? "basicBtn mt-4"
+                  : "proBtn mt-4"
               }`}
               disabled={isLoading || currentPlan === plan.type}
             >
@@ -148,12 +157,6 @@ export default function PricingSection() {
           </div>
         ))}
       </div>
-      {message && (
-        <div className="mt-4 text-red-500">{message}</div>
-      )}
-      {!currentPlan && isLoggedIn && (
-        <div className="mt-4 text-red-500">Select a Plan</div>
-      )}
     </section>
   );
 }

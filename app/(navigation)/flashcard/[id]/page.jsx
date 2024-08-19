@@ -55,7 +55,7 @@ export default function Flashcard() {
   };
 
   if (!isLoaded) {
-    return <div>Loading...</div>;
+    return <div className="loading text-4xl py-20">Loading...</div>;
   }
 
   if (!isSignedIn) {
@@ -93,11 +93,11 @@ export default function Flashcard() {
   }
 
   return (
-    <div className="container mx-auto px-4 max-w-3xl">
-      <h1 className="text-3xl font-bold text-center my-8 capitalize">
+    <div className="mx-auto px-4 ">
+      <h1 className="text-6xl font-bold text-[#F2EBFF] text-center mb-8">
         {setName}
       </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-8">
+      <div className="w-5/6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6 mx-auto mb-10">
         {flashcards.map((flashcard, index) => (
           <div key={index} className="perspective-1000">
             <div
@@ -106,11 +106,11 @@ export default function Flashcard() {
               }`}
               onClick={() => handleCardClick(index)}
             >
-              <div className="absolute w-full h-full backface-hidden flex justify-center items-center p-4 bg-white shadow-lg rounded-lg">
-                <p className="text-xl">{flashcard.front}</p>
+              <div className="absolute w-full h-full backface-hidden text-center flex justify-center items-center p-4 bg-white shadow-lg rounded-lg bg-[#98E2FF] font-bold">
+                <p className="text-2xl">{flashcard.front}</p>
               </div>
-              <div className="absolute w-full h-full backface-hidden flex justify-center items-start p-4 bg-white shadow-lg rounded-lg rotate-y-180 overflow-auto">
-                <p className="text-xl">{flashcard.back}</p>
+              <div className="absolute w-full h-full backface-hidden flex text-center justify-center items-center p-4 bg-white shadow-lg rounded-lg rotate-y-180 overflow-auto font-bold">
+                <p className="text-2xl">{flashcard.back}</p>
               </div>
             </div>
           </div>
