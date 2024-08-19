@@ -3,6 +3,8 @@ import Footer from "./components/Footer";
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 import Image from "next/image";
+=======
+
 
 // PricingSection as a separate client component
 import dynamic from "next/dynamic";
@@ -11,7 +13,7 @@ const PricingSection = dynamic(() => import("./components/PricingSection"), {
 });
 
 export default function Home() {
-  const { isAuthenticated, user } = useAuth(); // Use your auth hook or context
+
   return (
     <>
       <section className="flex justify-center items-center gap-4 w-5/6 mx-auto text-center">
