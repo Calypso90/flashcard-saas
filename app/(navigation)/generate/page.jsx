@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { db } from "../../firebase";
 import { useRouter } from "next/navigation";
@@ -8,8 +8,8 @@ import {
   collection,
   setDoc,
   getDoc,
+  getDocs,
   writeBatch,
-  updateDoc,
 } from "firebase/firestore";
 import { useFirebaseUser } from "../../hooks/useFirebaseUser";
 
@@ -22,25 +22,34 @@ export default function Generate() {
   const [open, setOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [userPlan, setUserPlan] = useState(null);
-  const [flashcardSetsGenerated, setFlashcardSetsGenerated] = useState(0);
+  const [savedFlashcardSets, setSavedFlashcardSets] = useState(0);
   const { firebaseUser, isFirebaseLoading } = useFirebaseUser();
   const router = useRouter();
 
   useEffect(() => {
-    async function fetchUserPlan() {
-      if (isLoaded && user) {
+    async function fetchUserData() {
+      if (isLoaded && user && firebaseUser) {
         const userRef = doc(db, "users", user.id);
-        const userSnap = await getDoc(userRef);
-        if (userSnap.exists()) {
-          const userData = userSnap.data();
-          setUserPlan(userData.planType);
-          setFlashcardSetsGenerated(userData.flashcardSetsGenerated || 0);
-        }
+        const flashcardSetsRef = collection(userRef, "flashcardSets");
+        const flashcardSetsSnap = await getDocs(flashcardSetsRef);
+        setSavedFlashcardSets(flashcardSetsSnap.size);
       }
     }
-    fetchUserPlan();
-  }, [isLoaded, user]);
+    fetchUserData();
+  }, [isLoaded, user, firebaseUser]);
+
+  const getPlanLimit = (planType) => {
+    switch (planType) {
+      case "free":
+        return 10;
+      case "basic":
+        return 50;
+      case "pro":
+        return Infinity;
+      default:
+        return 0;
+    }
+  };
 
   const handleSubmit = async () => {
     if (!text.trim()) {
@@ -48,23 +57,9 @@ export default function Generate() {
       return;
     }
 
-    if (
-      firebaseUser.planType === "free" &&
-      firebaseUser.flashcardSetsGenerated >= 10
-    ) {
-      alert(
-        "You've reached the limit for the free plan. Please upgrade to generate more flashcards."
-      );
-      return;
-    }
-
-    if (
-      firebaseUser.planType === "basic" &&
-      firebaseUser.flashcardSetsGenerated >= 50
-    ) {
-      alert(
-        "You've reached the limit for the basic plan. Please upgrade to generate more flashcards."
-      );
+    const planLimit = getPlanLimit(firebaseUser.planType);
+    if (savedFlashcardSets >= planLimit) {
+      alert(`You've reached the limit for the ${firebaseUser.planType} plan. Please upgrade to generate more flashcards.`);
       return;
     }
 
@@ -108,33 +103,12 @@ export default function Generate() {
     setIsSaving(true);
     try {
       const userDocRef = doc(collection(db, "users"), user.id);
-      const userDocSnap = await getDoc(userDocRef);
-
-      const batch = writeBatch(db);
-
-      if (userDocSnap.exists()) {
-        const userData = userDocSnap.data();
-        const updatedSets = [
-          ...(userData.flashcardSets || []),
-          { name: setName },
-        ];
-        batch.update(userDocRef, { flashcardSets: updatedSets });
-      } else {
-        batch.set(userDocRef, { flashcardSets: [{ name: setName }] });
-      }
-
       const setDocRef = doc(collection(userDocRef, "flashcardSets"), setName);
-      batch.set(setDocRef, { flashcards });
-
-      // Increment flashcardSetsGenerated count
-      batch.update(userDocRef, {
-        flashcardSetsGenerated: firebaseUser.flashcardSetsGenerated + 1,
-      });
-
-      await batch.commit();
+      
+      await setDoc(setDocRef, { flashcards });
 
       // Update local state
-      setFlashcardSetsGenerated((prev) => prev + 1);
+      setSavedFlashcardSets((prev) => prev + 1);
 
       alert("Flashcards saved successfully!");
       handleClose();
@@ -170,6 +144,8 @@ export default function Generate() {
     );
   }
 
+  const planLimit = getPlanLimit(firebaseUser.planType);
+
   return (
     <div className="container mx-auto px-4">
       <div className="mt-8 mb-12 flex flex-col items-center">
@@ -181,7 +157,7 @@ export default function Generate() {
           <p className="mb-4 capitalize">
             Your current plan: {firebaseUser.planType || "None"}
           </p>
-          <p className="mb-4">Flashcard Sets Saved: {flashcardSetsGenerated}</p>
+          <p className="mb-4">Flashcard Sets Saved: {savedFlashcardSets} / {planLimit === Infinity ? "Unlimited" : planLimit}</p>
           {!firebaseUser.planType && (
             <p className="text-red-500 mb-4">
               You must select a plan to continue.
@@ -193,7 +169,7 @@ export default function Generate() {
             placeholder="Enter Text Here"
             className="w-full p-2 border border-gray-300 rounded-md mb-4"
             rows={4}
-            disabled={!firebaseUser.planType}
+            disabled={!firebaseUser.planType || savedFlashcardSets >= planLimit}
           />
           <button
             onClick={handleSubmit}
@@ -201,10 +177,7 @@ export default function Generate() {
             disabled={
               !firebaseUser.planType ||
               isGenerating ||
-              (firebaseUser.planType === "free" &&
-                firebaseUser.flashcardSetsGenerated >= 10) ||
-              (firebaseUser.planType === "basic" &&
-                firebaseUser.flashcardSetsGenerated >= 50)
+              savedFlashcardSets >= planLimit
             }
           >
             {isGenerating ? "Generating..." : "Submit"}
