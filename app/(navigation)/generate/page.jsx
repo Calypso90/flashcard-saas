@@ -150,14 +150,16 @@ export default function Generate() {
   };
 
   if (!isLoaded || isFirebaseLoading) {
-    return <div>Loading...</div>;
+    return <div className="loading text-4xl py-20">Loading...</div>;
   }
 
   if (!isSignedIn) {
     return (
       <div className="container mx-auto px-4">
         <div className="mt-8 mb-12 flex flex-col items-center">
-          <h1 className="text-3xl font-bold mb-6">Generate Flashcards</h1>
+          <h1 className="text-3xl font-bold text-slate-200 mb-6">
+            Generate Flashcards
+          </h1>
           <div className="w-full bg-white shadow-md rounded-lg p-6 flex flex-col items-center">
             <p className="text-red-500">
               You must sign in first to make flashcards.
@@ -171,14 +173,17 @@ export default function Generate() {
   return (
     <div className="container mx-auto px-4">
       <div className="mt-8 mb-12 flex flex-col items-center">
-        <h1 className="text-3xl font-bold mb-6">Generate Flashcards</h1>
-        <div className="w-full bg-white shadow-md rounded-lg p-6 flex flex-col items-center">
+        <div className="w-3/4 bg-white shadow-md rounded-lg p-6 flex flex-col items-center">
+          <h1 className="text-3xl font-bold mb-4">Generate Flashcards</h1>
           <p className="mb-4">
+            Enter your notes or prompt below to create a set of 10 flashcards.
+          </p>
+          {/* <p className="mb-4">
             Your current plan: {firebaseUser.planType || "None"}
-          </p>
-          <p className="mb-4">
-            Flashcard sets generated: {flashcardSetsGenerated}
-          </p>
+          </p> */}
+          {/* <h1 className="text-3xl font-bold text-slate-200 mb-6">
+          Generate Flashcards
+        </h1> */}
           {!firebaseUser.planType && (
             <p className="text-red-500 mb-4">
               You must select a plan to continue.
@@ -187,14 +192,14 @@ export default function Generate() {
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Enter Text"
+            placeholder="Enter Text Here"
             className="w-full p-2 border border-gray-300 rounded-md mb-4"
             rows={4}
             disabled={!firebaseUser.planType}
           />
           <button
             onClick={handleSubmit}
-            className="startBtn"
+            className="submitBtn"
             disabled={
               !firebaseUser.planType ||
               isGenerating ||
@@ -211,8 +216,10 @@ export default function Generate() {
 
       {flashcards.length > 0 && (
         <div className="mt-8">
-          <h2 className="text-2xl font-bold mb-4">Flashcards Preview</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <h2 className="text-3xl font-bold text-[#F2EBFF] text-center mb-4">
+            Flashcards Preview
+          </h2>
+          <div className="w-5/6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6 mx-auto">
             {flashcards.map((flashcard, index) => (
               <div key={index} className="perspective-1000">
                 <div
@@ -221,18 +228,18 @@ export default function Generate() {
                   }`}
                   onClick={() => handleCardClick(index)}
                 >
-                  <div className="absolute w-full h-full backface-hidden flex justify-center items-center p-4 bg-white shadow-lg rounded-lg">
-                    <p className="text-xl">{flashcard.front}</p>
+                  <div className="absolute w-full h-full backface-hidden text-center flex justify-center items-center p-4 bg-white shadow-lg rounded-lg bg-[#98E2FF] font-bold">
+                    <p className="text-2xl">{flashcard.front}</p>
                   </div>
-                  <div className="absolute w-full h-full backface-hidden flex justify-center items-start p-4 bg-white shadow-lg rounded-lg rotate-y-180 overflow-auto">
-                    <p className="text-xl">{flashcard.back}</p>
+                  <div className="absolute w-full h-full backface-hidden flex text-center justify-center items-center p-4 bg-white shadow-lg rounded-lg rotate-y-180 overflow-auto font-bold">
+                    <p className="text-2xl">{flashcard.back}</p>
                   </div>
                 </div>
               </div>
             ))}
           </div>
           <div className="mt-8 mb-8 flex justify-center">
-            <button onClick={handleOpen} className="otherBtn">
+            <button onClick={handleOpen} className="saveBtn">
               Save
             </button>
           </div>
@@ -241,11 +248,11 @@ export default function Generate() {
 
       {open && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded-lg">
-            <h2 className="text-2xl font-bold mb-4">Save Flashcards</h2>
-            <p className="mb-4">
-              Please enter a name for your flashcards collection
-            </p>
+          <div className="bg-white p-6 rounded-lg min-w-96">
+            <h2 className="text-2xl font-bold text-center mb-4">
+              Save Flashcards
+            </h2>
+            <p className="mb-4 text-center">Name your flashcard collection</p>
             <input
               type="text"
               value={setName}
@@ -255,18 +262,18 @@ export default function Generate() {
             />
             <div className="flex justify-end gap-4">
               <button
-                onClick={handleClose}
-                className="startBtn"
-                disabled={isSaving}
-              >
-                Close
-              </button>
-              <button
                 onClick={saveFlashcards}
-                className="otherBtn"
+                className="saveBtn"
                 disabled={isSaving}
               >
                 {isSaving ? "Saving..." : "Save"}
+              </button>
+              <button
+                onClick={handleClose}
+                className="closeBtn"
+                disabled={isSaving}
+              >
+                Close
               </button>
             </div>
           </div>

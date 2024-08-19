@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase"; // Make sure this path is correct
 import { useFirebaseUser } from "../hooks/useFirebaseUser";
+import Image from "next/image";
 
 export default function Navbar() {
   const { isLoaded, user } = useUser();
@@ -29,12 +30,13 @@ export default function Navbar() {
   }, [isLoaded, user]);
 
   return (
-    <nav className="flex flex-col sm:flex-row items-center justify-between py-4 px-8">
-      <div className="flex mb-4 sm:mb-0">
+    <nav className="flex flex-col sm:flex-row items-center justify-between py-4 px-6 mb-10">
+      <div className="mb-4 sm:mb-0">
         <Link
           href="/"
-          className="text-2xl tracking-wider hover:transform hover:scale-110 "
+          className="flex text-2xl tracking-wider hover:transform hover:scale-110 gap-2 items-center"
         >
+          <Image src="/logo.png" width={35} height={35} alt="Flash Wave Logo" />
           <span className="typing-text">
             {Array.from("Flash\u00A0Wave").map((char, index) => (
               <span key={index} className="typing-letter">
@@ -44,26 +46,26 @@ export default function Navbar() {
           </span>
         </Link>
       </div>
-      <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 gap-4">
+      <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 ">
         <SignedIn>
-          <Link href={`/generate`} className="otherBtn">
+          <Link href={`/generate`} className="navBtn">
             Generate Flashcards
           </Link>
-          <Link href={`/flashcards`} className="startBtn">
-            Flashcards
+          <Link href={`/flashcards`} className="navBtn">
+            Saved Flashcards
           </Link>
           {!isFirebaseLoading && firebaseUser && (
-            <span className="text-sm font-medium">
-              Plan: {firebaseUser.planType ? firebaseUser.planType : "None"}
+            <span className="text-md font-medium text-slate-300 capitalize text-[#F39C6B]">
+              {firebaseUser.planType ? firebaseUser.planType : "None"}
             </span>
           )}
           <UserButton afterSignOutUrl="/" />
         </SignedIn>
         <SignedOut>
-          <Link href="/sign-in" className="startBtn">
+          <Link href="/sign-in" className="navBtn">
             Sign In
           </Link>
-          <Link href="/sign-up" className="otherBtn">
+          <Link href="/sign-up" className="navBtn">
             Sign Up
           </Link>
         </SignedOut>
