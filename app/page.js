@@ -1,7 +1,6 @@
 "use client";
 import Footer from "./components/Footer";
 import Link from "next/link";
-import { useAuth } from "@clerk/nextjs";
 
 // PricingSection as a separate client component
 import dynamic from "next/dynamic";
@@ -10,7 +9,7 @@ const PricingSection = dynamic(() => import("./components/PricingSection"), {
 });
 
 export default function Home() {
-  const { isAuthenticated, user } = useAuth(); // Use your auth hook or context
+
   return (
     <>
       <section className="text-center flex flex-col w-full items-center gap-4">
