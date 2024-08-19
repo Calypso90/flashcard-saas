@@ -1,9 +1,7 @@
 "use client";
 import Footer from "./components/Footer";
 import Link from "next/link";
-import { useAuth } from "@clerk/nextjs";
 import Image from "next/image";
-=======
 
 
 // PricingSection as a separate client component
