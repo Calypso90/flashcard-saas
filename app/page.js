@@ -14,8 +14,8 @@ export default function Home() {
 
   return (
     <>
-      <section className="flex justify-center items-center gap-4 w-5/6 mx-auto text-center">
-        <div className="mr-20">
+      <section className="flex flex-col md:flex-row justify-center items-center gap-4  mx-auto text-center mx-4">
+        <div className=" flex flex-col items-center justify-center">
           <h1 className="text-4xl font-bold text-slate-100 mb-4">
             Effortless Flashcard Creation with Flash Wave
           </h1>
